@@ -1,0 +1,64 @@
+{
+ "case": "barrier_crash-v40-o100-tripod",
+ "label": "synthetic self-consistency",
+ "schema": "v2e.targets/1",
+ "sources": {
+  "design_value": "round value chosen for v2e-synth-1 from first principles; not measured from any video",
+  "first_principles": "computed from the design values with point-mass or rigid-body mechanics, symmetry arguments and g = 9.81 m/s^2",
+  "reported": "measured and reported only; no pass/fail bar in v0"
+ },
+ "targets": [
+  {
+   "actor": "car",
+   "event": "impact",
+   "metric": "speed_at_event",
+   "note": "the driver holds the design speed until first contact",
+   "source": "design_value",
+   "unit": "m/s",
+   "value": [
+    11.111111,
+    0.3
+   ]
+  },
+  {
+   "actor": "car",
+   "event": "impact",
+   "metric": "time_of_event",
+   "note": "time from frame 0 to first contact",
+   "source": "design_value",
+   "unit": "s",
+   "value": [
+    1.0,
+    0.03333333333333333
+   ]
+  },
+  {
+   "actor": "car",
+   "event": "impact",
+   "metric": "yaw_change_after_event",
+   "note": "mirror symmetry: a head-on full-overlap impact has no preferred turning direction",
+   "source": "first_principles",
+   "unit": "deg",
+   "value": [
+    0.0,
+    5.0
+   ]
+  },
+  {
+   "actor": "car",
+   "event": "impact",
+   "metric": "rebound_speed",
+   "source": "reported",
+   "unit": "m/s",
+   "value": null
+  },
+  {
+   "actor": "car",
+   "event": "rest",
+   "metric": "rest_position",
+   "source": "reported",
+   "unit": "m",
+   "value": null
+  }
+ ]
+}

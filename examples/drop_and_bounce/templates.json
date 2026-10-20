@@ -1,0 +1,53 @@
+{
+ "objects": {
+  "ball": {
+   "overrides": {
+    "mass_kg": {
+     "reason": "benchmark design value",
+     "status": "assumed",
+     "value": 2.0
+    }
+   },
+   "template": "prop.sphere"
+  },
+  "box": {
+   "overrides": {
+    "mass_kg": {
+     "reason": "benchmark design value",
+     "status": "assumed",
+     "value": 20.0
+    }
+   },
+   "template": "prop.box"
+  },
+  "cylinder": {
+   "overrides": {
+    "mass_kg": {
+     "reason": "benchmark design value",
+     "status": "assumed",
+     "value": 8.0
+    }
+   },
+   "template": "prop.cylinder"
+  },
+  "ground": {
+   "template": "static.mesh"
+  },
+  "post_1": {
+   "template": "static.mesh"
+  },
+  "post_2": {
+   "template": "static.mesh"
+  },
+  "post_3": {
+   "template": "static.mesh"
+  },
+  "post_4": {
+   "template": "static.mesh"
+  },
+  "slab": {
+   "template": "static.mesh"
+  }
+ },
+ "schema": "v2e.templates/1"
+}

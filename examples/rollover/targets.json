@@ -1,0 +1,58 @@
+{
+ "case": "rollover-v60-tripod",
+ "label": "synthetic self-consistency",
+ "schema": "v2e.targets/1",
+ "sources": {
+  "design_value": "round value chosen for v2e-synth-1 from first principles; not measured from any video",
+  "first_principles": "computed from the design values with point-mass or rigid-body mechanics, symmetry arguments and g = 9.81 m/s^2",
+  "reported": "measured and reported only; no pass/fail bar in v0"
+ },
+ "targets": [
+  {
+   "actor": "car",
+   "event": "trip_contact",
+   "metric": "speed_at_event",
+   "source": "design_value",
+   "unit": "m/s",
+   "value": [
+    16.666667,
+    0.3
+   ]
+  },
+  {
+   "actor": "car",
+   "metric": "roll_onset_allowed",
+   "note": "rigid-body energy bound: tipping needs at least 4.9 m/s; a run may roll over only where this is 1",
+   "source": "first_principles",
+   "unit": "bool",
+   "value": [
+    1.0,
+    0.0
+   ]
+  },
+  {
+   "actor": "car",
+   "metric": "cumulative_roll_deg",
+   "phase": "after_trip",
+   "source": "reported",
+   "unit": "deg",
+   "value": null
+  },
+  {
+   "actor": "car",
+   "event": "rest",
+   "metric": "quarter_turns",
+   "source": "reported",
+   "unit": "count",
+   "value": null
+  },
+  {
+   "actor": "car",
+   "event": "rest",
+   "metric": "rest_attitude",
+   "source": "reported",
+   "unit": "class",
+   "value": null
+  }
+ ]
+}

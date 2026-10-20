@@ -1,0 +1,27 @@
+{
+  "example": "quickstart_fake",
+  "expected_claim_class": "test_double",
+  "note": "The fake connector is a test double: these checks exercise the pipeline and a first-principles bound; they support no claim about any physics engine.",
+  "targets": [
+    {
+      "what": "first contact of the crate with the ground",
+      "event": "first_contact.crate.ground",
+      "value_s": 0.6387,
+      "tolerance_s": 0.02,
+      "source": "first_principles",
+      "derivation": "free fall of the crate's lowest face from 2.0 m: t = sqrt(2 h / g), g = 9.80665 m/s^2"
+    },
+    {
+      "what": "first contact of the ball with the ground",
+      "event": "first_contact.ball.ground",
+      "value_s": 0.4516,
+      "tolerance_s": 0.02,
+      "source": "first_principles",
+      "derivation": "free fall of the ball's lowest point from 1.0 m: t = sqrt(2 h / g), g = 9.80665 m/s^2"
+    }
+  ],
+  "checks": [
+    {"what": "every run is valid and its ledger audit is clean"},
+    {"what": "the car drives off along +x, turns right (negative yaw) under positive steer, and comes to rest after the brake command"}
+  ]
+}

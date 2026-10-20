@@ -1,0 +1,147 @@
+{
+  "source": "OpenBeam MCP tool reference (published documentation): names from the game tool index and the account tool tables (sessions, video recording, maps and routes), sorted; retrieved 2026-10-20",
+  "account_tools": [
+    "cloud_game_call",
+    "cloud_game_tools",
+    "cloud_map_height",
+    "cloud_map_info",
+    "cloud_map_load",
+    "cloud_map_roads",
+    "cloud_maps_list",
+    "cloud_recording_download",
+    "cloud_recording_list",
+    "cloud_recording_start",
+    "cloud_recording_stop",
+    "cloud_route_clear",
+    "cloud_route_get",
+    "cloud_route_set",
+    "cloud_session_end",
+    "cloud_session_list",
+    "cloud_session_start"
+  ],
+  "game_tools": [
+    "actor_poses",
+    "asset_zone",
+    "camera_frame",
+    "cloud_list_levels",
+    "cloud_sign_in",
+    "cloud_sign_out",
+    "cloud_status",
+    "cloud_upload_level",
+    "delete_level",
+    "delete_mod",
+    "gamepad",
+    "install_mod",
+    "list_levels",
+    "list_mods",
+    "load_level",
+    "quit",
+    "read_log",
+    "reload",
+    "robot_attach",
+    "robot_fk",
+    "robot_ik",
+    "robot_info",
+    "robot_jacobian",
+    "robot_set_joints",
+    "robot_state",
+    "run_script",
+    "screenshot",
+    "sim_mode",
+    "sim_step",
+    "spawn_vehicle",
+    "status",
+    "telemetry",
+    "upload_level"
+  ],
+  "documented_arguments": {
+    "camera_frame": [
+      "max_width",
+      "format"
+    ],
+    "cloud_game_call": [
+      "name",
+      "arguments",
+      "session_id"
+    ],
+    "cloud_game_tools": [
+      "session_id"
+    ],
+    "cloud_recording_download": [
+      "session_id",
+      "episode_id",
+      "file"
+    ],
+    "cloud_recording_start": [
+      "session_id",
+      "label"
+    ],
+    "cloud_recording_stop": [
+      "session_id"
+    ],
+    "cloud_session_end": [
+      "session_id"
+    ],
+    "cloud_session_start": [
+      "width",
+      "height",
+      "fps",
+      "bitrate_kbps",
+      "kind"
+    ],
+    "delete_mod": [
+      "filename"
+    ],
+    "install_mod": [
+      "url",
+      "path",
+      "sha256",
+      "filename",
+      "replace"
+    ],
+    "load_level": [
+      "level_id",
+      "filename",
+      "archive",
+      "sha256",
+      "terrain",
+      "spawn",
+      "wait_seconds"
+    ],
+    "read_log": [
+      "log",
+      "lines",
+      "grep"
+    ],
+    "run_script": [
+      "code"
+    ],
+    "screenshot": [
+      "wait_seconds",
+      "keep"
+    ],
+    "sim_mode": [
+      "mode",
+      "idle_release_s"
+    ],
+    "sim_step": [
+      "steps",
+      "positions",
+      "robot"
+    ],
+    "spawn_vehicle": [
+      "file",
+      "config",
+      "position",
+      "enter",
+      "wait_seconds"
+    ],
+    "upload_level": [
+      "url",
+      "path",
+      "sha256",
+      "filename",
+      "replace"
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "schema": "v2e.scene/1",
+  "name": "quickstart_fake",
+  "world": "world/",
+  "frame": "Z-up level frame, SI units",
+  "actors": [
+    {
+      "id": "car_1",
+      "class": "vehicle.car",
+      "dims_m": {"length": [4.5, 0.05], "width": [1.8, 0.03], "height": [1.45, 0.03]},
+      "mass_kg": [1500, 150],
+      "seatable": true,
+      "control": "driver",
+      "initial_state": {"mode": "at_rest", "pose": {"position_m": [0.0, 0.0, 0.725], "quat_xyzw": [0, 0, 0, 1]}}
+    },
+    {
+      "id": "crate",
+      "class": "prop.box",
+      "dims_m": {"length": [0.5, 0.01], "width": [0.5, 0.01], "height": [0.5, 0.01]},
+      "seatable": false,
+      "control": "passive",
+      "initial_state": {"mode": "at_rest", "pose": {"position_m": [6.0, 4.0, 2.25], "quat_xyzw": [0, 0, 0, 1]}}
+    },
+    {
+      "id": "ball",
+      "class": "prop.sphere",
+      "dims_m": {"diameter": [0.4, 0.01]},
+      "seatable": false,
+      "control": "passive",
+      "initial_state": {"mode": "at_rest", "pose": {"position_m": [8.0, -4.0, 1.2], "quat_xyzw": [0, 0, 0, 1]}}
+    }
+  ],
+  "events": [],
+  "phases": [],
+  "targets": [],
+  "requires": {
+    "effects": ["drive", "brake", "steer", "contact"],
+    "observables": ["position", "attitude"],
+    "controlled_actors": 1,
+    "seatable_vehicles": 1
+  }
+}

@@ -1,0 +1,17 @@
+Data licence
+
+Unless a file or its accompanying provenance record says otherwise, data that
+OpenBeam, LLC creates and distributes with OpenBeam V2E (benchmark ground truth,
+annotations, example scenes, rendered benchmark clips and documentation figures)
+is licensed under the Creative Commons Attribution 4.0 International licence
+(CC BY 4.0).
+
+  Licence summary: https://creativecommons.org/licenses/by/4.0/
+  Legal code:      https://creativecommons.org/licenses/by/4.0/legalcode
+
+Attribution: "OpenBeam V2E data (c) OpenBeam, LLC, CC BY 4.0".
+
+Clips and data from third parties are not covered by this file. Each keeps its
+own licence, which is recorded in the provenance file next to it.
+
+Source code is licensed separately under the Apache License 2.0 (see LICENSE).

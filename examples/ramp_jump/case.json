@@ -1,0 +1,475 @@
+{
+ "benchmark": "v2e-synth-1",
+ "camera": {
+  "hfov_deg": 60.0,
+  "k1": 0.0,
+  "lag_s": 0.0,
+  "look_at_m": [
+   5.0,
+   0.0,
+   1.2
+  ],
+  "name": "tripod",
+  "position_m": [
+   4.0,
+   -22.0,
+   2.0
+  ],
+  "zoom_end": 1.0
+ },
+ "case": "ramp_jump-a15-v55-tripod",
+ "clip_s": 3.5,
+ "description": "generic vehicle off a 15 deg wedge ramp at 55 km/h",
+ "expected_claim": "test_double",
+ "family": "ramp_jump",
+ "fps": 30.0,
+ "frames": 105,
+ "params": {
+  "angle_deg": 15.0,
+  "speed_kmh": 55.0
+ },
+ "scene": {
+  "actors": [
+   {
+    "class": "vehicle.car",
+    "control": "driver",
+    "dims_m": {
+     "height": [
+      1.45,
+      0.0
+     ],
+     "length": [
+      4.75,
+      0.0
+     ],
+     "track": [
+      1.6,
+      0.0
+     ],
+     "wheelbase": [
+      2.75,
+      0.0
+     ],
+     "width": [
+      1.8,
+      0.0
+     ]
+    },
+    "id": "car",
+    "initial_state": {
+     "frame0_pose": "track:car@0",
+     "mode": "drive_in",
+     "speed_mps": [
+      15.277778,
+      0.0
+     ]
+    },
+    "seatable": true
+   },
+   {
+    "class": "static",
+    "id": "ground",
+    "mesh": 1,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "ramp",
+    "mesh": 2,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_1",
+    "mesh": 3,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_2",
+    "mesh": 4,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_3",
+    "mesh": 5,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_4",
+    "mesh": 6,
+    "role": "collision"
+   }
+  ],
+  "events": [
+   {
+    "evidence": "ground truth",
+    "name": "ramp_contact"
+   },
+   {
+    "evidence": "ground truth",
+    "name": "takeoff"
+   },
+   {
+    "evidence": "ground truth",
+    "name": "apex"
+   },
+   {
+    "evidence": "ground truth",
+    "name": "landing"
+   }
+  ],
+  "frame": "Z-up level frame, SI units",
+  "phases": [
+   {
+    "from": "start",
+    "name": "approach",
+    "to": "ramp_contact"
+   },
+   {
+    "from": "ramp_contact",
+    "name": "ramp",
+    "to": "takeoff"
+   },
+   {
+    "from": "takeoff",
+    "name": "airborne",
+    "to": "landing"
+   },
+   {
+    "from": "landing",
+    "name": "landing",
+    "to": "end"
+   }
+  ],
+  "requires": {
+   "controlled_actors": 1,
+   "effects": [
+    "drive",
+    "brake",
+    "steer",
+    "contact"
+   ],
+   "observables": [
+    "position",
+    "attitude"
+   ],
+   "seatable_vehicles": 1
+  },
+  "schema": "v2e.scene/1",
+  "targets": [
+   {
+    "actor": "car",
+    "citation": "the driver holds the design speed up the ramp",
+    "event": "takeoff",
+    "metric": "speed_at_event",
+    "source": "design_value",
+    "tolerance_sigma": 1.0,
+    "unit": "m/s",
+    "value": [
+     15.277778,
+     0.3
+    ]
+   },
+   {
+    "actor": "car",
+    "citation": "rise of the centre from take-off to apex: (v sin a)^2 / 2g; tolerance 15 % (at least 5 cm)",
+    "metric": "apex_rise",
+    "phase": "airborne",
+    "source": "first_principles",
+    "tolerance_sigma": 1.0,
+    "unit": "m",
+    "value": [
+     0.796918,
+     0.11953775482786158
+    ]
+   },
+   {
+    "actor": "car",
+    "citation": "point-mass time from take-off to ground contact; tolerance 15 %",
+    "metric": "airborne_time",
+    "phase": "airborne",
+    "source": "first_principles",
+    "tolerance_sigma": 1.0,
+    "unit": "s",
+    "value": [
+     0.969799,
+     0.14546984023471035
+    ]
+   },
+   {
+    "actor": "car",
+    "citation": "point-mass horizontal distance from the edge; tolerance 15 %",
+    "metric": "landing_distance",
+    "phase": "airborne",
+    "source": "first_principles",
+    "tolerance_sigma": 1.0,
+    "unit": "m",
+    "value": [
+     14.311517,
+     2.146727544329673
+    ]
+   }
+  ],
+  "world": "world/"
+ },
+ "score_only": false,
+ "targets": {
+  "case": "ramp_jump-a15-v55-tripod",
+  "label": "synthetic self-consistency",
+  "schema": "v2e.targets/1",
+  "sources": {
+   "design_value": "round value chosen for v2e-synth-1 from first principles; not measured from any video",
+   "first_principles": "computed from the design values with point-mass or rigid-body mechanics, symmetry arguments and g = 9.81 m/s^2",
+   "reported": "measured and reported only; no pass/fail bar in v0"
+  },
+  "targets": [
+   {
+    "actor": "car",
+    "event": "takeoff",
+    "metric": "speed_at_event",
+    "note": "the driver holds the design speed up the ramp",
+    "source": "design_value",
+    "unit": "m/s",
+    "value": [
+     15.277778,
+     0.3
+    ]
+   },
+   {
+    "actor": "car",
+    "metric": "apex_rise",
+    "note": "rise of the centre from take-off to apex: (v sin a)^2 / 2g; tolerance 15 % (at least 5 cm)",
+    "phase": "airborne",
+    "source": "first_principles",
+    "unit": "m",
+    "value": [
+     0.796918,
+     0.11953775482786158
+    ]
+   },
+   {
+    "actor": "car",
+    "metric": "airborne_time",
+    "note": "point-mass time from take-off to ground contact; tolerance 15 %",
+    "phase": "airborne",
+    "source": "first_principles",
+    "unit": "s",
+    "value": [
+     0.969799,
+     0.14546984023471035
+    ]
+   },
+   {
+    "actor": "car",
+    "metric": "landing_distance",
+    "note": "point-mass horizontal distance from the edge; tolerance 15 %",
+    "phase": "airborne",
+    "source": "first_principles",
+    "unit": "m",
+    "value": [
+     14.311517,
+     2.146727544329673
+    ]
+   }
+  ]
+ },
+ "templates": {
+  "objects": {
+   "car": {
+    "overrides": {
+     "mass_kg": {
+      "reason": "benchmark design value",
+      "status": "assumed",
+      "value": 1500.0
+     }
+    },
+    "template": "vehicle.generic"
+   },
+   "ground": {
+    "template": "static.mesh"
+   },
+   "post_1": {
+    "template": "static.mesh"
+   },
+   "post_2": {
+    "template": "static.mesh"
+   },
+   "post_3": {
+    "template": "static.mesh"
+   },
+   "post_4": {
+    "template": "static.mesh"
+   },
+   "ramp": {
+    "template": "static.mesh"
+   }
+  },
+  "schema": "v2e.templates/1"
+ },
+ "version": "0.1.0",
+ "world": {
+  "actors": [
+   {
+    "class": "vehicle.car",
+    "control": "driver",
+    "dims_m": {
+     "height": 1.45,
+     "length": 4.75,
+     "track": 1.6,
+     "wheelbase": 2.75,
+     "width": 1.8
+    },
+    "drive": {
+     "stages": [
+      {
+       "mode": "cruise",
+       "until": {
+        "airborne_s": 0.1
+       }
+      },
+      {
+       "cmd": {
+        "drive.throttle": 0.0
+       },
+       "mode": "fixed",
+       "until": {
+        "contact": "ground"
+       }
+      },
+      {
+       "cmd": {
+        "drive.brake": 0.3,
+        "drive.throttle": 0.0
+       },
+       "mode": "fixed"
+      }
+     ]
+    },
+    "frame0": {
+     "pitch_deg": 0.0,
+     "position_m": [
+      -20.565631881459865,
+      0.0,
+      0.725
+     ],
+     "roll_deg": 0.0,
+     "yaw_deg": 0.0
+    },
+    "id": "car",
+    "mass_kg": 1500.0,
+    "mode": "drive_in",
+    "role": "subject",
+    "speed_mps": 15.277777777777777,
+    "template": "vehicle.generic"
+   }
+  ],
+  "statics": [
+   {
+    "id": "ground",
+    "kind": "ground",
+    "observed": true,
+    "params": {
+     "size_m": 200.0
+    },
+    "position_m": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "ramp",
+    "kind": "wedge_ramp",
+    "observed": true,
+    "params": {
+     "angle_deg": 15.0,
+     "segments": [
+      [
+       1.0,
+       5.0
+      ],
+      [
+       1.0,
+       10.0
+      ],
+      [
+       2.0,
+       15.0
+      ]
+     ],
+     "width_m": 3.0
+    },
+    "position_m": [
+     -1.956427051841045,
+     0.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_1",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     -8.0,
+     9.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_2",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     0.0,
+     9.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_3",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     8.0,
+     9.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_4",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     16.0,
+     9.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   }
+  ]
+ }
+}

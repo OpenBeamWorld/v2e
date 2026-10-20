@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.venv/
+.coverage
+# Local outputs: run directories, caches and downloaded model weights stay out of git.
+runs/
+.cache/
+weights/

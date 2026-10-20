@@ -1,0 +1,60 @@
+{
+ "case": "ramp_jump-a15-v55-tripod",
+ "label": "synthetic self-consistency",
+ "schema": "v2e.targets/1",
+ "sources": {
+  "design_value": "round value chosen for v2e-synth-1 from first principles; not measured from any video",
+  "first_principles": "computed from the design values with point-mass or rigid-body mechanics, symmetry arguments and g = 9.81 m/s^2",
+  "reported": "measured and reported only; no pass/fail bar in v0"
+ },
+ "targets": [
+  {
+   "actor": "car",
+   "event": "takeoff",
+   "metric": "speed_at_event",
+   "note": "the driver holds the design speed up the ramp",
+   "source": "design_value",
+   "unit": "m/s",
+   "value": [
+    15.277778,
+    0.3
+   ]
+  },
+  {
+   "actor": "car",
+   "metric": "apex_rise",
+   "note": "rise of the centre from take-off to apex: (v sin a)^2 / 2g; tolerance 15 % (at least 5 cm)",
+   "phase": "airborne",
+   "source": "first_principles",
+   "unit": "m",
+   "value": [
+    0.796918,
+    0.11953775482786158
+   ]
+  },
+  {
+   "actor": "car",
+   "metric": "airborne_time",
+   "note": "point-mass time from take-off to ground contact; tolerance 15 %",
+   "phase": "airborne",
+   "source": "first_principles",
+   "unit": "s",
+   "value": [
+    0.969799,
+    0.14546984023471035
+   ]
+  },
+  {
+   "actor": "car",
+   "metric": "landing_distance",
+   "note": "point-mass horizontal distance from the edge; tolerance 15 %",
+   "phase": "airborne",
+   "source": "first_principles",
+   "unit": "m",
+   "value": [
+    14.311517,
+    2.146727544329673
+   ]
+  }
+ ]
+}

@@ -1,0 +1,18 @@
+{
+  "programs": {
+    "car_1": {
+      "schema": "v2e.program/1",
+      "actor": "car_1",
+      "model": "schedule",
+      "host": "client_lockstep",
+      "params": {
+        "interpolation": "hold",
+        "schedule": [
+          {"t": 0.0, "cmd": {"drive.throttle": 0.5}},
+          {"t": 2.5, "cmd": {"drive.throttle": 0.3, "drive.steer": 0.4}},
+          {"t": 4.0, "cmd": {"drive.throttle": 0.0, "drive.steer": 0.0, "drive.brake": 1.0}}
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,547 @@
+{
+ "benchmark": "v2e-synth-1",
+ "camera": {
+  "hfov_deg": 55.0,
+  "k1": 0.0,
+  "lag_s": 0.0,
+  "look_at_m": [
+   0.0,
+   0.0,
+   1.25
+  ],
+  "name": "tripod",
+  "position_m": [
+   0.0,
+   -9.0,
+   2.1666666666666665
+  ],
+  "zoom_end": 1.0
+ },
+ "case": "drop_and_bounce-drop-h2-tripod",
+ "clip_s": 3.5,
+ "description": "box, ball and cylinder dropped 2 m onto a slab",
+ "expected_claim": "test_double",
+ "family": "drop_and_bounce",
+ "fps": 30.0,
+ "frames": 105,
+ "params": {
+  "drop_height_m": 2.0,
+  "incline_deg": null,
+  "variant": "drop"
+ },
+ "scene": {
+  "actors": [
+   {
+    "class": "prop.box",
+    "control": "passive",
+    "dims_m": {
+     "height": [
+      0.5,
+      0.0
+     ],
+     "length": [
+      0.5,
+      0.0
+     ],
+     "width": [
+      0.5,
+      0.0
+     ]
+    },
+    "id": "box",
+    "initial_state": {
+     "frame0_pose": "track:box@0",
+     "mode": "at_rest"
+    },
+    "seatable": false
+   },
+   {
+    "class": "prop.sphere",
+    "control": "passive",
+    "dims_m": {
+     "diameter": [
+      0.3,
+      0.0
+     ]
+    },
+    "id": "ball",
+    "initial_state": {
+     "frame0_pose": "track:ball@0",
+     "mode": "at_rest"
+    },
+    "seatable": false
+   },
+   {
+    "class": "prop.cylinder",
+    "control": "passive",
+    "dims_m": {
+     "diameter": [
+      0.3,
+      0.0
+     ],
+     "length": [
+      0.5,
+      0.0
+     ]
+    },
+    "id": "cylinder",
+    "initial_state": {
+     "frame0_pose": "track:cylinder@0",
+     "mode": "at_rest"
+    },
+    "seatable": false
+   },
+   {
+    "class": "static",
+    "id": "ground",
+    "mesh": 1,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "slab",
+    "mesh": 2,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_1",
+    "mesh": 3,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_2",
+    "mesh": 4,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_3",
+    "mesh": 5,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_4",
+    "mesh": 6,
+    "role": "collision"
+   }
+  ],
+  "events": [
+   {
+    "evidence": "ground truth",
+    "name": "first_contact.box"
+   },
+   {
+    "evidence": "ground truth",
+    "name": "rest.box"
+   },
+   {
+    "evidence": "ground truth",
+    "name": "first_contact.ball"
+   },
+   {
+    "evidence": "ground truth",
+    "name": "rest.ball"
+   },
+   {
+    "evidence": "ground truth",
+    "name": "first_contact.cylinder"
+   },
+   {
+    "evidence": "ground truth",
+    "name": "rest.cylinder"
+   }
+  ],
+  "frame": "Z-up level frame, SI units",
+  "phases": [
+   {
+    "from": "start",
+    "name": "fall",
+    "to": "first_contact.box"
+   },
+   {
+    "from": "first_contact.box",
+    "name": "bounces",
+    "to": "end"
+   }
+  ],
+  "requires": {
+   "controlled_actors": 0,
+   "effects": [
+    "contact"
+   ],
+   "observables": [
+    "position",
+    "attitude"
+   ],
+   "seatable_vehicles": 0
+  },
+  "schema": "v2e.scene/1",
+  "targets": [
+   {
+    "actor": "box",
+    "citation": "free fall from rest: sqrt(2 h / g) after frame 0",
+    "event": "first_contact.box",
+    "metric": "time_of_event",
+    "source": "first_principles",
+    "tolerance_sigma": 1.0,
+    "unit": "s",
+    "value": [
+     0.638551,
+     0.03333333333333333
+    ]
+   },
+   {
+    "actor": "ball",
+    "citation": "free fall from rest: sqrt(2 h / g) after frame 0",
+    "event": "first_contact.ball",
+    "metric": "time_of_event",
+    "source": "first_principles",
+    "tolerance_sigma": 1.0,
+    "unit": "s",
+    "value": [
+     0.638551,
+     0.03333333333333333
+    ]
+   },
+   {
+    "actor": "cylinder",
+    "citation": "free fall from rest: sqrt(2 h / g) after frame 0",
+    "event": "first_contact.cylinder",
+    "metric": "time_of_event",
+    "source": "first_principles",
+    "tolerance_sigma": 1.0,
+    "unit": "s",
+    "value": [
+     0.638551,
+     0.03333333333333333
+    ]
+   }
+  ],
+  "world": "world/"
+ },
+ "score_only": true,
+ "targets": {
+  "case": "drop_and_bounce-drop-h2-tripod",
+  "label": "synthetic self-consistency",
+  "schema": "v2e.targets/1",
+  "sources": {
+   "design_value": "round value chosen for v2e-synth-1 from first principles; not measured from any video",
+   "first_principles": "computed from the design values with point-mass or rigid-body mechanics, symmetry arguments and g = 9.81 m/s^2",
+   "reported": "measured and reported only; no pass/fail bar in v0"
+  },
+  "targets": [
+   {
+    "actor": "box",
+    "event": "first_contact.box",
+    "metric": "time_of_event",
+    "note": "free fall from rest: sqrt(2 h / g) after frame 0",
+    "source": "first_principles",
+    "unit": "s",
+    "value": [
+     0.638551,
+     0.03333333333333333
+    ]
+   },
+   {
+    "actor": "box",
+    "metric": "first_rebound_ratio",
+    "phase": "bounces",
+    "source": "reported",
+    "unit": "ratio",
+    "value": null
+   },
+   {
+    "actor": "box",
+    "event": "rest.box",
+    "metric": "rest_position",
+    "source": "reported",
+    "unit": "m",
+    "value": null
+   },
+   {
+    "actor": "ball",
+    "event": "first_contact.ball",
+    "metric": "time_of_event",
+    "note": "free fall from rest: sqrt(2 h / g) after frame 0",
+    "source": "first_principles",
+    "unit": "s",
+    "value": [
+     0.638551,
+     0.03333333333333333
+    ]
+   },
+   {
+    "actor": "ball",
+    "metric": "first_rebound_ratio",
+    "phase": "bounces",
+    "source": "reported",
+    "unit": "ratio",
+    "value": null
+   },
+   {
+    "actor": "ball",
+    "event": "rest.ball",
+    "metric": "rest_position",
+    "source": "reported",
+    "unit": "m",
+    "value": null
+   },
+   {
+    "actor": "cylinder",
+    "event": "first_contact.cylinder",
+    "metric": "time_of_event",
+    "note": "free fall from rest: sqrt(2 h / g) after frame 0",
+    "source": "first_principles",
+    "unit": "s",
+    "value": [
+     0.638551,
+     0.03333333333333333
+    ]
+   },
+   {
+    "actor": "cylinder",
+    "metric": "first_rebound_ratio",
+    "phase": "bounces",
+    "source": "reported",
+    "unit": "ratio",
+    "value": null
+   },
+   {
+    "actor": "cylinder",
+    "event": "rest.cylinder",
+    "metric": "rest_position",
+    "source": "reported",
+    "unit": "m",
+    "value": null
+   }
+  ]
+ },
+ "templates": {
+  "objects": {
+   "ball": {
+    "overrides": {
+     "mass_kg": {
+      "reason": "benchmark design value",
+      "status": "assumed",
+      "value": 2.0
+     }
+    },
+    "template": "prop.sphere"
+   },
+   "box": {
+    "overrides": {
+     "mass_kg": {
+      "reason": "benchmark design value",
+      "status": "assumed",
+      "value": 20.0
+     }
+    },
+    "template": "prop.box"
+   },
+   "cylinder": {
+    "overrides": {
+     "mass_kg": {
+      "reason": "benchmark design value",
+      "status": "assumed",
+      "value": 8.0
+     }
+    },
+    "template": "prop.cylinder"
+   },
+   "ground": {
+    "template": "static.mesh"
+   },
+   "post_1": {
+    "template": "static.mesh"
+   },
+   "post_2": {
+    "template": "static.mesh"
+   },
+   "post_3": {
+    "template": "static.mesh"
+   },
+   "post_4": {
+    "template": "static.mesh"
+   },
+   "slab": {
+    "template": "static.mesh"
+   }
+  },
+  "schema": "v2e.templates/1"
+ },
+ "version": "0.1.0",
+ "world": {
+  "actors": [
+   {
+    "class": "prop.box",
+    "control": "passive",
+    "dims_m": {
+     "height": 0.5,
+     "length": 0.5,
+     "width": 0.5
+    },
+    "drive": {},
+    "frame0": {
+     "pitch_deg": 0.0,
+     "position_m": [
+      -1.5,
+      0.0,
+      2.5
+     ],
+     "roll_deg": 0.0,
+     "yaw_deg": 0.0
+    },
+    "id": "box",
+    "mass_kg": 20.0,
+    "mode": "at_rest",
+    "role": "subject",
+    "speed_mps": 0.0,
+    "template": "prop.box"
+   },
+   {
+    "class": "prop.sphere",
+    "control": "passive",
+    "dims_m": {
+     "diameter": 0.3
+    },
+    "drive": {},
+    "frame0": {
+     "pitch_deg": 0.0,
+     "position_m": [
+      0.0,
+      0.0,
+      2.4
+     ],
+     "roll_deg": 0.0,
+     "yaw_deg": 0.0
+    },
+    "id": "ball",
+    "mass_kg": 2.0,
+    "mode": "at_rest",
+    "role": "subject",
+    "speed_mps": 0.0,
+    "template": "prop.sphere"
+   },
+   {
+    "class": "prop.cylinder",
+    "control": "passive",
+    "dims_m": {
+     "diameter": 0.3,
+     "length": 0.5
+    },
+    "drive": {},
+    "frame0": {
+     "pitch_deg": 0.0,
+     "position_m": [
+      1.5,
+      0.0,
+      2.4
+     ],
+     "roll_deg": 0.0,
+     "yaw_deg": 0.0
+    },
+    "id": "cylinder",
+    "mass_kg": 8.0,
+    "mode": "at_rest",
+    "role": "subject",
+    "speed_mps": 0.0,
+    "template": "prop.cylinder"
+   }
+  ],
+  "statics": [
+   {
+    "id": "ground",
+    "kind": "ground",
+    "observed": true,
+    "params": {
+     "size_m": 200.0
+    },
+    "position_m": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "slab",
+    "kind": "slab",
+    "observed": true,
+    "params": {
+     "size_x_m": 6.0,
+     "size_y_m": 4.0,
+     "thickness_m": 0.25
+    },
+    "position_m": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_1",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     -3.5,
+     4.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_2",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     -1.2,
+     4.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_3",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     1.2,
+     4.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_4",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     3.5,
+     4.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   }
+  ]
+ }
+}

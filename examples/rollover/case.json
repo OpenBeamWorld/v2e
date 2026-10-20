@@ -1,0 +1,422 @@
+{
+ "benchmark": "v2e-synth-1",
+ "camera": {
+  "hfov_deg": 60.0,
+  "k1": 0.0,
+  "lag_s": 0.0,
+  "look_at_m": [
+   6.0,
+   0.0,
+   0.8
+  ],
+  "name": "tripod",
+  "position_m": [
+   10.0,
+   -18.0,
+   2.0
+  ],
+  "zoom_end": 1.0
+ },
+ "case": "rollover-v60-tripod",
+ "clip_s": 4.0,
+ "description": "generic vehicle with its left wheels over a one-sided trip ramp at 60 km/h",
+ "expected_claim": "test_double",
+ "family": "rollover",
+ "fps": 30.0,
+ "frames": 120,
+ "params": {
+  "speed_kmh": 60.0
+ },
+ "scene": {
+  "actors": [
+   {
+    "class": "vehicle.car",
+    "control": "driver",
+    "dims_m": {
+     "height": [
+      1.45,
+      0.0
+     ],
+     "length": [
+      4.75,
+      0.0
+     ],
+     "track": [
+      1.6,
+      0.0
+     ],
+     "wheelbase": [
+      2.75,
+      0.0
+     ],
+     "width": [
+      1.8,
+      0.0
+     ]
+    },
+    "id": "car",
+    "initial_state": {
+     "frame0_pose": "track:car@0",
+     "mode": "drive_in",
+     "speed_mps": [
+      16.666667,
+      0.0
+     ]
+    },
+    "seatable": true
+   },
+   {
+    "class": "static",
+    "id": "ground",
+    "mesh": 1,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "trip_ramp",
+    "mesh": 2,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_1",
+    "mesh": 3,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_2",
+    "mesh": 4,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_3",
+    "mesh": 5,
+    "role": "collision"
+   },
+   {
+    "class": "static",
+    "id": "post_4",
+    "mesh": 6,
+    "role": "collision"
+   }
+  ],
+  "events": [
+   {
+    "evidence": "ground truth",
+    "name": "trip_contact"
+   },
+   {
+    "evidence": "ground truth",
+    "name": "trip_exit"
+   },
+   {
+    "evidence": "ground truth",
+    "name": "rest"
+   }
+  ],
+  "frame": "Z-up level frame, SI units",
+  "phases": [
+   {
+    "from": "start",
+    "name": "approach",
+    "to": "trip_contact"
+   },
+   {
+    "from": "trip_contact",
+    "name": "trip",
+    "to": "trip_exit"
+   },
+   {
+    "from": "trip_exit",
+    "name": "after_trip",
+    "to": "end"
+   }
+  ],
+  "requires": {
+   "controlled_actors": 1,
+   "effects": [
+    "drive",
+    "brake",
+    "steer",
+    "contact"
+   ],
+   "observables": [
+    "position",
+    "attitude"
+   ],
+   "seatable_vehicles": 1
+  },
+  "schema": "v2e.scene/1",
+  "targets": [
+   {
+    "actor": "car",
+    "event": "trip_contact",
+    "metric": "speed_at_event",
+    "source": "design_value",
+    "tolerance_sigma": 1.0,
+    "unit": "m/s",
+    "value": [
+     16.666667,
+     0.3
+    ]
+   },
+   {
+    "actor": "car",
+    "citation": "rigid-body energy bound: tipping needs at least 4.9 m/s; a run may roll over only where this is 1",
+    "metric": "roll_onset_allowed",
+    "source": "first_principles",
+    "tolerance_sigma": 1.0,
+    "unit": "bool",
+    "value": [
+     1.0,
+     0.0
+    ]
+   }
+  ],
+  "world": "world/"
+ },
+ "score_only": false,
+ "targets": {
+  "case": "rollover-v60-tripod",
+  "label": "synthetic self-consistency",
+  "schema": "v2e.targets/1",
+  "sources": {
+   "design_value": "round value chosen for v2e-synth-1 from first principles; not measured from any video",
+   "first_principles": "computed from the design values with point-mass or rigid-body mechanics, symmetry arguments and g = 9.81 m/s^2",
+   "reported": "measured and reported only; no pass/fail bar in v0"
+  },
+  "targets": [
+   {
+    "actor": "car",
+    "event": "trip_contact",
+    "metric": "speed_at_event",
+    "source": "design_value",
+    "unit": "m/s",
+    "value": [
+     16.666667,
+     0.3
+    ]
+   },
+   {
+    "actor": "car",
+    "metric": "roll_onset_allowed",
+    "note": "rigid-body energy bound: tipping needs at least 4.9 m/s; a run may roll over only where this is 1",
+    "source": "first_principles",
+    "unit": "bool",
+    "value": [
+     1.0,
+     0.0
+    ]
+   },
+   {
+    "actor": "car",
+    "metric": "cumulative_roll_deg",
+    "phase": "after_trip",
+    "source": "reported",
+    "unit": "deg",
+    "value": null
+   },
+   {
+    "actor": "car",
+    "event": "rest",
+    "metric": "quarter_turns",
+    "source": "reported",
+    "unit": "count",
+    "value": null
+   },
+   {
+    "actor": "car",
+    "event": "rest",
+    "metric": "rest_attitude",
+    "source": "reported",
+    "unit": "class",
+    "value": null
+   }
+  ]
+ },
+ "templates": {
+  "objects": {
+   "car": {
+    "overrides": {
+     "mass_kg": {
+      "reason": "benchmark design value",
+      "status": "assumed",
+      "value": 1500.0
+     }
+    },
+    "template": "vehicle.generic"
+   },
+   "ground": {
+    "template": "static.mesh"
+   },
+   "post_1": {
+    "template": "static.mesh"
+   },
+   "post_2": {
+    "template": "static.mesh"
+   },
+   "post_3": {
+    "template": "static.mesh"
+   },
+   "post_4": {
+    "template": "static.mesh"
+   },
+   "trip_ramp": {
+    "template": "static.mesh"
+   }
+  },
+  "schema": "v2e.templates/1"
+ },
+ "version": "0.1.0",
+ "world": {
+  "actors": [
+   {
+    "class": "vehicle.car",
+    "control": "driver",
+    "dims_m": {
+     "height": 1.45,
+     "length": 4.75,
+     "track": 1.6,
+     "wheelbase": 2.75,
+     "width": 1.8
+    },
+    "drive": {
+     "stages": [
+      {
+       "mode": "cruise",
+       "until": {
+        "contact": "trip_ramp"
+       }
+      },
+      {
+       "cmd": {
+        "drive.brake": 0.0,
+        "drive.steer": 0.0,
+        "drive.throttle": 0.0
+       },
+       "mode": "fixed"
+      }
+     ]
+    },
+    "frame0": {
+     "pitch_deg": 0.0,
+     "position_m": [
+      -18.041666666666668,
+      0.0,
+      0.725
+     ],
+     "roll_deg": 0.0,
+     "yaw_deg": 0.0
+    },
+    "id": "car",
+    "mass_kg": 1500.0,
+    "mode": "drive_in",
+    "role": "subject",
+    "speed_mps": 16.666666666666668,
+    "template": "vehicle.generic"
+   }
+  ],
+  "statics": [
+   {
+    "id": "ground",
+    "kind": "ground",
+    "observed": true,
+    "params": {
+     "size_m": 200.0
+    },
+    "position_m": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "trip_ramp",
+    "kind": "trip_ramp",
+    "observed": true,
+    "params": {
+     "segments": [
+      [
+       0.6,
+       8.0
+      ],
+      [
+       1.6,
+       22.0
+      ]
+     ],
+     "width_m": 1.0
+    },
+    "position_m": [
+     1.038827504275901,
+     0.8,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_1",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     -6.0,
+     9.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_2",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     2.0,
+     9.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_3",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     10.0,
+     9.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   },
+   {
+    "id": "post_4",
+    "kind": "post",
+    "observed": true,
+    "params": {
+     "height_m": 1.5,
+     "size_m": 0.2
+    },
+    "position_m": [
+     18.0,
+     9.0,
+     0.0
+    ],
+    "yaw_deg": 0.0
+   }
+  ]
+ }
+}

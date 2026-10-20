@@ -1,0 +1,33 @@
+{
+ "objects": {
+  "car": {
+   "overrides": {
+    "mass_kg": {
+     "reason": "benchmark design value",
+     "status": "assumed",
+     "value": 1500.0
+    }
+   },
+   "template": "vehicle.generic"
+  },
+  "ground": {
+   "template": "static.mesh"
+  },
+  "post_1": {
+   "template": "static.mesh"
+  },
+  "post_2": {
+   "template": "static.mesh"
+  },
+  "post_3": {
+   "template": "static.mesh"
+  },
+  "post_4": {
+   "template": "static.mesh"
+  },
+  "ramp": {
+   "template": "static.mesh"
+  }
+ },
+ "schema": "v2e.templates/1"
+}

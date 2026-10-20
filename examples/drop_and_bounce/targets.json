@@ -1,0 +1,96 @@
+{
+ "case": "drop_and_bounce-drop-h2-tripod",
+ "label": "synthetic self-consistency",
+ "schema": "v2e.targets/1",
+ "sources": {
+  "design_value": "round value chosen for v2e-synth-1 from first principles; not measured from any video",
+  "first_principles": "computed from the design values with point-mass or rigid-body mechanics, symmetry arguments and g = 9.81 m/s^2",
+  "reported": "measured and reported only; no pass/fail bar in v0"
+ },
+ "targets": [
+  {
+   "actor": "box",
+   "event": "first_contact.box",
+   "metric": "time_of_event",
+   "note": "free fall from rest: sqrt(2 h / g) after frame 0",
+   "source": "first_principles",
+   "unit": "s",
+   "value": [
+    0.638551,
+    0.03333333333333333
+   ]
+  },
+  {
+   "actor": "box",
+   "metric": "first_rebound_ratio",
+   "phase": "bounces",
+   "source": "reported",
+   "unit": "ratio",
+   "value": null
+  },
+  {
+   "actor": "box",
+   "event": "rest.box",
+   "metric": "rest_position",
+   "source": "reported",
+   "unit": "m",
+   "value": null
+  },
+  {
+   "actor": "ball",
+   "event": "first_contact.ball",
+   "metric": "time_of_event",
+   "note": "free fall from rest: sqrt(2 h / g) after frame 0",
+   "source": "first_principles",
+   "unit": "s",
+   "value": [
+    0.638551,
+    0.03333333333333333
+   ]
+  },
+  {
+   "actor": "ball",
+   "metric": "first_rebound_ratio",
+   "phase": "bounces",
+   "source": "reported",
+   "unit": "ratio",
+   "value": null
+  },
+  {
+   "actor": "ball",
+   "event": "rest.ball",
+   "metric": "rest_position",
+   "source": "reported",
+   "unit": "m",
+   "value": null
+  },
+  {
+   "actor": "cylinder",
+   "event": "first_contact.cylinder",
+   "metric": "time_of_event",
+   "note": "free fall from rest: sqrt(2 h / g) after frame 0",
+   "source": "first_principles",
+   "unit": "s",
+   "value": [
+    0.638551,
+    0.03333333333333333
+   ]
+  },
+  {
+   "actor": "cylinder",
+   "metric": "first_rebound_ratio",
+   "phase": "bounces",
+   "source": "reported",
+   "unit": "ratio",
+   "value": null
+  },
+  {
+   "actor": "cylinder",
+   "event": "rest.cylinder",
+   "metric": "rest_position",
+   "source": "reported",
+   "unit": "m",
+   "value": null
+  }
+ ]
+}

@@ -1,0 +1,91 @@
+# SPDX-FileCopyrightText: 2026 OpenBeam, LLC
+# SPDX-License-Identifier: Apache-2.0
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "openbeam-v2e"
+dynamic = ["version"]
+description = "OpenBeam V2E (Video-to-Engine): recreate a filmed physical event in a physics engine and score the run against the footage."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "OpenBeam, LLC" }]
+license = "Apache-2.0"
+license-files = ["LICENSE", "LICENSE-DATA", "NOTICE"]
+keywords = ["video", "reconstruction", "physics-simulation", "benchmark", "computer-vision", "mcp"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+# The base install is NumPy and SciPy only; everything heavier is an optional extra.
+dependencies = [
+    "numpy>=1.23",
+    "scipy>=1.9",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0", "Pillow>=10.0"]
+# Optional perception adapters; the CPU baseline needs none of these.
+perception = [
+    "torch>=2.1",
+    "transformers>=4.45",
+    "huggingface-hub>=0.24",
+]
+sam2 = [
+    "torch>=2.1",
+    "sam2>=1.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/OpenBeamWorld/v2e"
+Source = "https://github.com/OpenBeamWorld/v2e"
+Issues = "https://github.com/OpenBeamWorld/v2e/issues"
+
+[project.scripts]
+openbeam-v2e = "openbeam_v2e.cli:main"
+
+[tool.hatch.version]
+path = "src/openbeam_v2e/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/openbeam_v2e"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "tests/",
+    "examples/",
+    "docs/",
+    "benchmarks/",
+    "README.md",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "LICENSE",
+    "LICENSE-DATA",
+    "NOTICE",
+    "pyproject.toml",
+]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+pythonpath = ["src"]
+# Live-engine tests are opt-in: pass `-m openbeam` to run them against your own session.
+addopts = ["-ra", "--strict-markers", "--strict-config", "-m", "not openbeam"]
+markers = [
+    "openbeam: needs a live OpenBeam game or cloud session through the documented MCP tools (opt in with -m openbeam)",
+    "slow: long-running CPU test",
+]
