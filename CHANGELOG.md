@@ -13,6 +13,10 @@ Private v0 preview (pre-alpha). Tested on synthetic clips and the `fake` test co
 - Reconstruction from video, frame folders or frame arrays, with CPU baselines, uncertainty,
   held-out residuals and a stage cache.
 - Pluggable perception stages and optional SAM 2, CoTracker and Hugging Face model adapters.
+- Optional `tapnext` point-tracking adapter for TAPNext++ from Google DeepMind's tapnet
+  repository (Apache-2.0 code and weights). It loads a local checkpoint, records its sha256 and
+  tracks online, one frame at a time. It is tested with stand-ins, not with the real weights.
+  `PointTracks` gains an optional per-point `confidence`.
 - Schemas and validators for scenes, templates, run logs, content catalogs, package requests,
   score reports and world sidecars; world I/O using the 4DCodeBench layout.
 - Compiler with run-up synthesis, frame-0 alignment and connector dialects.

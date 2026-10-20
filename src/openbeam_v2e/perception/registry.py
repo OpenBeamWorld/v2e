@@ -46,6 +46,7 @@ BUILTINS: dict[tuple[str, str], str] = {
     ("pose", "baseline.silhouette"): f"{_BASE}.pose:SilhouettePoseEstimator",
     ("segmentation", "sam2"): f"{_ADAPT}.sam2:Sam2Segmenter",
     ("point_tracking", "cotracker"): f"{_ADAPT}.cotracker:CoTrackerPointTracker",
+    ("point_tracking", "tapnext"): f"{_ADAPT}.tapnext:TapNextPointTracker",
     ("depth", "hf.depth"): f"{_ADAPT}.hf_depth:TransformersDepth",
     ("detection", "hf.detection"): f"{_ADAPT}.hf_detection:TransformersDetector",
 }

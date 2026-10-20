@@ -69,9 +69,10 @@ openbeam-v2e reconstruct clip.mp4 --config reconstruct.json --annotations annota
 capability (calibration, camera tracking, detection, segmentation and mask tracking, point
 tracking, depth, pose fitting) and gets whichever model the configuration names. The base
 install ships CPU baselines that need only NumPy and SciPy. Optional adapters load SAM 2,
-CoTracker, and Hugging Face depth and detection models only when used; no model code or weights
-are copied into this package. Your own model registers through the `openbeam_v2e.perception`
-entry point group and can be chosen per stage (`--model masks=my.segmenter`).
+CoTracker, TAPNext++, and Hugging Face depth and detection models only when used; no model code
+or weights are copied into this package. Your own model registers through the
+`openbeam_v2e.perception` entry point group and can be chosen per stage
+(`--model masks=my.segmenter`).
 
 Guides: [Reconstruction](docs/reconstruction.md), [Adding a perception model](docs/perception-models.md),
 [World packages](docs/world-package.md).
@@ -234,7 +235,7 @@ The base install depends only on NumPy and SciPy. Optional extras:
 | Extra | Adds |
 | --- | --- |
 | `test` | pytest and Pillow for image-fixture coverage |
-| `perception` | PyTorch, Transformers and the Hugging Face hub, for depth and detection adapters |
+| `perception` | PyTorch, Transformers and the Hugging Face hub, for depth and detection adapters; PyTorch for the `cotracker` and `tapnext` point trackers, whose libraries install from their repositories |
 | `sam2` | SAM 2 for segmentation and mask tracking |
 
 The MCP server needs no extra. FFmpeg is an external program for MP4 input/output, not bundled;

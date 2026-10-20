@@ -21,7 +21,7 @@ version, weights and their hash, parameters) and, where the model can give one, 
 | `camera_tracking` | `CameraTracker` | `track(video, reference, frames, ...)` | `CameraTrack`: pan, tilt, roll and focal length per frame, with sigmas |
 | `detection` | `Detector` | `detect(image, classes)` | `Detection` list (seeds prompts when there are no annotations) |
 | `segmentation` | `Segmenter` | `segment(video, prompts, frames, cameras)` | `Segmentation`: masks per object per frame |
-| `point_tracking` | `PointTracker` | `track(video, queries, frames)` | `PointTracks` with visibility |
+| `point_tracking` | `PointTracker` | `track(video, queries, frames)` | `PointTracks` with visibility and, where the model gives one, a per-point confidence |
 | `depth` | `DepthEstimator` | `estimate(image, camera)` | `DepthMap`, metric or relative |
 | `pose` | `PoseEstimator` | `fit(masks, cameras, spec, frames, context)` | `PoseTrack`: rigid poses with covariance and measured dimensions |
 
@@ -37,13 +37,34 @@ The base install has CPU baselines that need only NumPy and SciPy: `baseline.poi
 `baseline.files` (segmentation), `baseline.lk` (point tracking), `baseline.ground_plane` (depth)
 and `baseline.silhouette` (pose). Adapters for heavier models install as extras: `sam2`
 (segmentation, `pip install "openbeam-v2e[sam2]"`), `hf.depth` and `hf.detection`
-(`[perception]`) and `cotracker` (point tracking). List what your installation has with:
+(`[perception]`) and `cotracker` and `tapnext` (point tracking). List what your installation has
+with:
 
 ```python
 from openbeam_v2e.perception import registry
 for model in registry.describe():
     print(model["kind"], model["name"], model["available"], model["status"])
 ```
+
+### Choosing a point tracker
+
+- `baseline.lk` is the CPU default: pyramidal Lucas-Kanade in NumPy and SciPy, tracking forward
+  from each query frame.
+- `tapnext` runs TAPNext++ (or the earlier BootsTAPNext) from Google DeepMind's
+  [tapnet](https://github.com/google-deepmind/tapnet) repository. It is the first learned point
+  tracker here whose code and weights are both released under Apache-2.0. tapnet is not on PyPI:
+  install `[perception]` plus `"tapnet[torch] @ git+https://github.com/google-deepmind/tapnet.git"`
+  and `einops`. The adapter never downloads weights. Download a checkpoint linked from the tapnet
+  README and pass its path as `checkpoint`, with `resolution: 512` for the 512 x 512 TAPNext++
+  checkpoint. The model runs online, one frame at a time, so memory stays bounded on long clips.
+  Like `baseline.lk`, it tracks forward through the frames in the order given: a point has no
+  position before its query frame. It fills `PointTracks.confidence` from tapnet's own certainty
+  estimate. The adapter is tested with stand-ins for PyTorch and tapnet, not with the real
+  weights.
+- `cotracker` is optional because CoTracker3's code and weights are released under CC BY-NC 4.0
+  (non-commercial use only).
+- Mask trackers such as SAM 2 (and the older Track-Anything) follow object masks, not points.
+  They belong to the segmentation stage (`sam2`), not to `point_tracking`.
 
 ## Writing a model
 

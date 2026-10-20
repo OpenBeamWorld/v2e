@@ -19,7 +19,7 @@ The base install depends only on NumPy and SciPy, and includes the MCP server fo
 
 | Extra | Adds |
 | --- | --- |
-| `perception` | PyTorch, Transformers and the Hugging Face hub, for the depth and detection adapters |
+| `perception` | PyTorch, Transformers and the Hugging Face hub, for the depth and detection adapters; PyTorch for the `cotracker` and `tapnext` point trackers, whose libraries install from their repositories |
 | `sam2` | SAM 2 for segmentation and mask tracking |
 
 FFmpeg is used as an external program when you read MP4 files or ask for an MP4 of a generated

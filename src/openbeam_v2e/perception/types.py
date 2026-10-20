@@ -15,7 +15,7 @@ Types:
   points);
 * :class:`MaskTrack` and :class:`Segmentation`: per-object masks per frame, stored as crops;
 * :class:`Detection`: one detected object (box, label, score, optional mask);
-* :class:`PointTracks`: 2-D point tracks with visibility;
+* :class:`PointTracks`: 2-D point tracks with visibility and an optional per-point confidence;
 * :class:`DepthMap`: per-pixel depth, metric or relative;
 * :class:`ObjectSpec` and :class:`PoseTrack`: what to fit for an object and the fitted rigid
   pose track with covariance.
@@ -306,12 +306,20 @@ class Detection:
 
 @dataclass
 class PointTracks:
-    """Pixel positions (N, T, 2) of N points over the frames, NaN where a point is lost."""
+    """Pixel positions (N, T, 2) of N points over the frames, NaN where a point is lost.
+
+    ``frames`` (T,) lists the frame numbers in the order they were tracked (possibly descending)
+    and ``visible`` (N, T) says where each point was seen; ``points`` is NaN wherever ``visible``
+    is False. ``confidence`` is optional: (N, T) values in [0, 1] taken from the model's own
+    outputs, NaN wherever the point is not visible. It is ``None`` when the model reports no such
+    value (``baseline.lk`` and ``cotracker`` leave it ``None``).
+    """
 
     frames: np.ndarray
     points: np.ndarray
     visible: np.ndarray
     provenance: list[ModelProvenance] = field(default_factory=list)
+    confidence: np.ndarray | None = None
 
 
 @dataclass
