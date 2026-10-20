@@ -6,13 +6,20 @@ All notable changes to this project are recorded here. The format follows
 
 ## Unreleased
 
-Private v0 preview (pre-alpha). Tested on synthetic clips and the `fake` test connector only.
+Private v0 preview (pre-alpha). End-to-end reconstruction/connector checks use synthetic
+clips and the `fake` test connector. The optional TrackEverything adapter additionally
+has a [single real-clip CUDA smoke run](docs/trackeverything.md); reconstruction accuracy
+and physical replay remain unqualified.
 
 ### Added
 
 - Reconstruction from video, frame folders or frame arrays, with CPU baselines, uncertainty,
   held-out residuals and a stage cache.
 - Pluggable perception stages and optional SAM 2, CoTracker and Hugging Face model adapters.
+- Optional pinned TrackEverything/Pi3 point-tracking adapter, with source-frame/pixel conversion,
+  visibility gaps and raw 3-D/camera artifacts for the video-import workflow.
+- Independent object-mask support checks for point tracks, retaining occlusion gaps and raw
+  predictions while rejecting confident background drift; mask hashes accompany the result.
 - Schemas and validators for scenes, templates, run logs, content catalogs, package requests,
   score reports and world sidecars; world I/O using the 4DCodeBench layout.
 - Compiler with run-up synthesis, frame-0 alignment and connector dialects.

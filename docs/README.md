@@ -11,6 +11,7 @@ with the code they describe.
 | Scope | What v0 can and cannot reconstruct, and what is planned after v0. |
 | [Reconstruction](reconstruction.md) | Running reconstruction; the `v2e.reconstruct/1` configuration and `v2e.annotations/1` prompts; outputs; what the CPU baseline does at each stage; how uncertainty is computed; installing model adapters; the limits of v0. |
 | [Adding a perception model](perception-models.md) | The perception capabilities and result types, writing and registering a model, choosing it per stage, and measuring it on the benchmark. |
+| [TrackEverything](trackeverything.md) | Pinned CUDA/Pi3 integration, raw artifacts, mask-supported point validation and the SO-101 real-clip evaluation. |
 | [Scenes and templates](scene-and-templates.md) | `v2e.scene/1` and `v2e.templates/1`, run-up synthesis and frame-0 alignment, with examples. |
 | [The compiler](compiler.md) | Scene + templates + a connector's content catalog to a `v2e.package/1` request: generated vehicles and props, stock matches, level collision, run-ups, refusals and connector dialects. |
 | [Connectors](connectors.md) | The `Backend` interface, capability flags, negotiation and refusal, the call ledger, and how to write a new connector. |

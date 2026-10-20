@@ -69,8 +69,9 @@ openbeam-v2e reconstruct clip.mp4 --config reconstruct.json --annotations annota
 capability (calibration, camera tracking, detection, segmentation and mask tracking, point
 tracking, depth, pose fitting) and gets whichever model the configuration names. The base
 install ships CPU baselines that need only NumPy and SciPy. Optional adapters load SAM 2,
-CoTracker, and Hugging Face depth and detection models only when used; no model code or weights
-are copied into this package. Your own model registers through the `openbeam_v2e.perception`
+CoTracker, [TrackEverything/Pi3](docs/trackeverything.md), and Hugging Face depth and detection
+models only when used; no model code or weights are copied into this package. Your own model
+registers through the `openbeam_v2e.perception`
 entry point group and can be chosen per stage (`--model masks=my.segmenter`).
 
 Guides: [Reconstruction](docs/reconstruction.md), [Adding a perception model](docs/perception-models.md),
@@ -268,6 +269,11 @@ All guides are listed in the [documentation index](docs/README.md).
 trips; compiler/run-up synthesis and the fake dialect; connector negotiation, ledger and audit;
 CLI and stdio MCP; all four families through the general compiler, run, export and score tools;
 wheel build/install checks. Offline CI covers Python 3.10 and 3.12.
+
+**Real-clip perception check:** the optional TrackEverything adapter completed CUDA inference
+on a 414-frame SO-101 clip. Its cube tracks drifted; independent mask support rejects the drift
+and retains separate visible-patch observations. See [the run evidence](docs/trackeverything.md)
+for measured results and the remaining reconstruction work.
 
 Latest measurements and reproduction commands: [Validation and remaining gates](docs/validation.md).
 

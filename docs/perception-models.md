@@ -37,7 +37,10 @@ The base install has CPU baselines that need only NumPy and SciPy: `baseline.poi
 `baseline.files` (segmentation), `baseline.lk` (point tracking), `baseline.ground_plane` (depth)
 and `baseline.silhouette` (pose). Adapters for heavier models install as extras: `sam2`
 (segmentation, `pip install "openbeam-v2e[sam2]"`), `hf.depth` and `hf.detection`
-(`[perception]`) and `cotracker` (point tracking). List what your installation has with:
+(`[perception]`) and `cotracker` (point tracking). The
+[`trackeverything` adapter](trackeverything.md) uses an external pinned CUDA checkout
+and Pi3 geometry, returning projected point tracks and optionally retaining raw 3-D
+predictions and cameras. List what your installation has with:
 
 ```python
 from openbeam_v2e.perception import registry

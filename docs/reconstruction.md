@@ -239,6 +239,7 @@ libraries only when they run:
 | `hf.depth` | depth | `pip install "openbeam-v2e[perception]"` |
 | `hf.detection` | detection | `pip install "openbeam-v2e[perception]"` |
 | `cotracker` | point tracking | `[perception]` plus CoTracker from its repository |
+| `trackeverything` | point tracking | [pinned external Linux/CUDA environment](trackeverything.md); Pi3 geometry |
 
 Model weights are downloaded from their hosts only when you run a model that needs them; check
 each model's licence on its model card before you use its output. `registry.describe()` lists

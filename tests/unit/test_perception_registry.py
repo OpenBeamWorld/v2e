@@ -49,7 +49,8 @@ def test_adapters_import_their_libraries_lazily() -> None:
             if isinstance(node, (ast.Import, ast.ImportFrom)):
                 mod = node.names[0].name if isinstance(node, ast.Import) else (node.module or "")
                 assert mod.split(".")[0] in {"__future__", "openbeam_v2e", "numpy", "typing", "tempfile",
-                                             "pathlib", "hashlib", "importlib"}, (path.name, mod)
+                                             "pathlib", "hashlib", "importlib", "dataclasses", "json",
+                                             "subprocess", "sys"}, (path.name, mod)
 
 
 def test_unavailable_model_is_refused_with_the_extra_to_install(monkeypatch: pytest.MonkeyPatch) -> None:
