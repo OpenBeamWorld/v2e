@@ -21,8 +21,9 @@ its local path as ``checkpoint`` (its sha256 goes into the provenance):
 * a TAPNext JAX checkpoint (``bootstapnext_ckpt.npz``, 256 x 256), converted on load with
   tapnet's ``restore_model_from_jax_checkpoint``.
 
-The network runs online, one frame per call, carrying its recurrent state from frame to frame,
-so memory stays bounded on long clips. Conventions handled here:
+The network runs online, one frame per call, carrying its recurrent state from frame to frame.
+Queries are tracked in groups of at most ``max_queries``, each group starting at its own earliest
+query frame, so memory stays bounded on long clips and with many queries. Conventions handled here:
 
 * frames are resized to ``resolution`` x ``resolution`` (bilinear with half-pixel centres and no
   antialiasing, like tapnet's own preprocessing; the aspect ratio is not kept) and scaled to
@@ -36,8 +37,9 @@ so memory stays bounded on long clips. Conventions handled here:
   which is the positive-logit test of tapnet's demos); with ``use_certainty=True`` the sigmoid is
   multiplied by the certainty first, like the demos' certainty option;
 * ``PointTracks.confidence`` is tapnet's ``tracker_certainty``: the probability mass of the
-  predicted position distribution within ``certainty_radius`` pixels (of the 256 x 256 query
-  space) of the predicted position. It is NaN where a point is not visible.
+  predicted position distribution within ``certainty_radius`` bins (of the 256 x 256 query
+  space; tapnet caps the radius at 8) of the predicted position. It is NaN where a point is not
+  visible.
 """
 
 from __future__ import annotations
@@ -54,6 +56,11 @@ from openbeam_v2e.perception.types import PointTracks
 
 #: Side of TAPNext's query and output space (the model's ``image_size``) for the published checkpoints.
 QUERY_SIZE = 256
+
+#: Loaded networks and checkpoint hashes, shared by every tracker instance (the reconstruction
+#: creates a tracker per pass): keyed on the checkpoint's path, size and mtime.
+_NETWORKS: dict[tuple[Any, ...], tuple[Any, Any]] = {}
+_HASHES: dict[tuple[str, int, int], str] = {}
 
 _INSTALL = ('install tapnet from its repository: pip install '
             '"tapnet[torch] @ git+https://github.com/google-deepmind/tapnet.git" einops')
@@ -114,8 +121,9 @@ class TapNextPointTracker(PointTracker):
     reconstruction pipeline's backward pass). As with ``baseline.lk``, a point has no position
     before its own query frame in that order: those columns are NaN and not visible (TAPNext only
     emits placeholders there). To track backwards from a query frame, pass the frames in reverse
-    order. All queries share one online pass, which starts at the earliest query frame; a query whose
-    frame is not in ``frames`` gives an all-NaN row.
+    order. Queries are tracked in groups of at most ``max_queries`` that share a start frame where
+    possible; each group's online pass starts at its own earliest query frame. A query whose frame
+    is not in ``frames``, or whose position is not finite, gives an all-NaN row.
     """
 
     name = "tapnext"
@@ -126,17 +134,19 @@ class TapNextPointTracker(PointTracker):
 
     def __init__(self, checkpoint: str | None = None, resolution: int = 256, device: str | None = None,
                  visibility_threshold: float = 0.5, use_certainty: bool = False, certainty_radius: int = 8,
-                 autocast: bool = True, **params: Any) -> None:
+                 autocast: bool = True, max_queries: int = 256, **params: Any) -> None:
         resolution = int(resolution)
         if resolution <= 0 or resolution % 8:
             raise ValueError(f"tapnext resolution must be a positive multiple of 8 (the patch size), got {resolution}")
+        if not 1 <= int(certainty_radius) <= 8:
+            raise ValueError(f"tapnext certainty_radius must be 1..8 (tapnet's certainty window), got {certainty_radius}")
+        if int(max_queries) < 1:
+            raise ValueError(f"tapnext max_queries must be at least 1, got {max_queries}")
         super().__init__(checkpoint=None if checkpoint is None else str(checkpoint), resolution=resolution,
                          device=device, visibility_threshold=float(visibility_threshold),
                          use_certainty=bool(use_certainty), certainty_radius=int(certainty_radius),
-                         autocast=bool(autocast), **params)
-        self._net: tuple[str, Any] | None = None          # (device, network), kept out of the params
+                         autocast=bool(autocast), max_queries=int(max_queries), **params)
         self._certainty: Any = None
-        self._sha: tuple[tuple[str, int, int], str | None] | None = None
 
     @classmethod
     def check(cls) -> tuple[bool, str]:
@@ -159,10 +169,10 @@ class TapNextPointTracker(PointTracker):
             st = Path(path).stat()
         except OSError:
             return None
-        key = (path, st.st_size, st.st_mtime_ns)
-        if self._sha is None or self._sha[0] != key:      # hash a multi-GB checkpoint once
-            self._sha = (key, sha256_of(path))
-        return self._sha[1]
+        key = (str(path), st.st_size, st.st_mtime_ns)
+        if key not in _HASHES:                            # hash a multi-GB checkpoint once per process
+            _HASHES[key] = sha256_of(path)
+        return _HASHES[key]
 
     def _model(self, device: str) -> Any:
         """The TAPNext network on ``device``, loaded once per instance."""
@@ -173,8 +183,13 @@ class TapNextPointTracker(PointTracker):
                                "file linked from the tapnet README (the adapter never downloads weights)")
         if not Path(path).is_file():
             raise FileNotFoundError(f"tapnext checkpoint not found: {path}")
-        if self._net is not None and self._net[0] == device:
-            return self._net[1]
+        st = Path(path).stat()
+        key = (str(path), st.st_size, st.st_mtime_ns, p["resolution"], str(device))
+        if key in _NETWORKS:
+            net, self._certainty = _NETWORKS[key]
+            if p["use_certainty"] and self._certainty is None:
+                raise RuntimeError("use_certainty=True needs tapnet's tracker_certainty, which this tapnet version lacks")
+            return net
         require("torch", "perception")
         utils = _tapnet("tapnet.tapnext.tapnext_torch_utils")
         if Path(path).suffix.lower() == ".npz":
@@ -191,7 +206,7 @@ class TapNextPointTracker(PointTracker):
         self._certainty = getattr(utils, "tracker_certainty", None)
         if p["use_certainty"] and self._certainty is None:
             raise RuntimeError("use_certainty=True needs tapnet's tracker_certainty, which this tapnet version lacks")
-        self._net = (device, net)
+        _NETWORKS[key] = (net, self._certainty)
         return net
 
     def _autocast(self, torch: Any, device: str) -> Any:
@@ -234,36 +249,52 @@ class TapNextPointTracker(PointTracker):
         pts = np.full((n, T, 2), np.nan)
         visible = np.zeros((n, T), bool)
         conf = np.full((n, T), np.nan)
-        rows = np.array([k for k in range(n) if int(Q[k, 0]) in index], int)
+        # A non-finite query would poison the network's joint attention for every point: leave its row NaN.
+        rows = np.array([k for k in range(n) if np.isfinite(Q[k]).all() and int(Q[k, 0]) in index], int)
         has_conf = False
         if len(rows):
             torch = require("torch", "perception")
-            start = np.array([index[int(Q[k, 0])] for k in rows], int)
-            k0 = int(start.min())                         # frames before every query carry no output
             device = pick_device(p["device"])
             net = self._model(device)
-            qh, qw = (float(s) for s in getattr(net, "image_size", (QUERY_SIZE, QUERY_SIZE)))
-            thr = float(p["visibility_threshold"])
-            state, qm, sx, sy = None, None, 1.0, 1.0
-            for ti in range(k0, T):
-                rgb = np.asarray(video.read(frames[ti]))
-                if state is None:
-                    h, w = rgb.shape[:2]
-                    sx, sy = qw / w, qh / h
-                    # (t, y, x): t indexes the frames fed to the network, starting at frames[k0]
-                    qm = np.stack([start - k0, Q[rows, 2] * sy, Q[rows, 1] * sx], axis=1).astype(np.float32)
-                yx, logit, cert, state = self._step(torch, net, model_frame(rgb, p["resolution"]),
-                                                    qm if state is None else None, state, device)
-                score = sigmoid(logit)
-                if p["use_certainty"]:
-                    score = score * cert
-                uv = np.stack([yx[:, 1] / sx, yx[:, 0] / sy], axis=1)
-                on = (ti >= start) & (score > thr) & np.all(np.isfinite(uv), axis=1)
-                pts[rows[on], ti] = uv[on]
-                visible[rows[on], ti] = True
-                if cert is not None:
-                    has_conf = True
-                    conf[rows[on], ti] = np.clip(cert[on], 0.0, 1.0)
+            start = np.array([index[int(Q[k, 0])] for k in rows], int)
+            order = np.argsort(start, kind="stable")      # groups of nearby start frames waste fewer steps
+            size = int(p["max_queries"])
+            for g in range(0, len(order), size):
+                pick = order[g:g + size]
+                has_conf |= self._track_group(torch, net, device, video, frames, Q, rows[pick], start[pick],
+                                          pts, visible, conf)
         pts[~visible] = np.nan
         conf[~visible] = np.nan
         return PointTracks(np.asarray(frames), pts, visible, [self.provenance()], conf if has_conf else None)
+
+    def _track_group(self, torch: Any, net: Any, device: str, video: Any, frames: list[int], Q: np.ndarray,
+                 rows: np.ndarray, start: np.ndarray, pts: np.ndarray, visible: np.ndarray,
+                 conf: np.ndarray) -> bool:
+        """Track one group of queries online from the group's earliest query frame; fills the
+        group's rows of ``pts``, ``visible`` and ``conf`` and says whether certainty was reported."""
+        p = self.params
+        T = len(frames)
+        k0 = int(start.min())                             # frames before every query carry no output
+        qh, qw = (float(s) for s in getattr(net, "image_size", (QUERY_SIZE, QUERY_SIZE)))
+        thr = float(p["visibility_threshold"])
+        state, qm, sx, sy, has_conf = None, None, 1.0, 1.0, False
+        for ti in range(k0, T):
+            rgb = np.asarray(video.read(frames[ti]))
+            if state is None:
+                h, w = rgb.shape[:2]
+                sx, sy = qw / w, qh / h
+                # (t, y, x): t indexes the frames fed to the network, starting at frames[k0]
+                qm = np.stack([start - k0, Q[rows, 2] * sy, Q[rows, 1] * sx], axis=1).astype(np.float32)
+            yx, logit, cert, state = self._step(torch, net, model_frame(rgb, p["resolution"]),
+                                                qm if state is None else None, state, device)
+            score = sigmoid(logit)
+            if p["use_certainty"]:
+                score = score * cert
+            uv = np.stack([yx[:, 1] / sx, yx[:, 0] / sy], axis=1)
+            on = (ti >= start) & (score > thr) & np.all(np.isfinite(uv), axis=1)
+            pts[rows[on], ti] = uv[on]
+            visible[rows[on], ti] = True
+            if cert is not None:
+                has_conf = True
+                conf[rows[on], ti] = np.clip(cert[on], 0.0, 1.0)
+        return has_conf

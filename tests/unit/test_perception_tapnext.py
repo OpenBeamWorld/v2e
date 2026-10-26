@@ -370,3 +370,46 @@ def test_point_tracks_confidence_is_optional() -> None:
     rgb = (np.random.default_rng(2).random((3, 48, 64, 3)) * 255).astype(np.uint8)
     lk = LucasKanadeTracker().track(ArrayFrames(rgb), np.array([[0, 30.5, 20.5]]), [0, 1, 2])
     assert lk.confidence is None
+
+
+@pytest.mark.parametrize("radius", [0, 9])
+def test_certainty_radius_outside_tapnets_window_is_refused(radius: int) -> None:
+    with pytest.raises(ValueError, match="certainty_radius"):
+        _tracker(certainty_radius=radius)
+
+
+def test_queries_run_in_groups_each_from_its_own_first_frame(monkeypatch: pytest.MonkeyPatch, ckpt: Any) -> None:
+    net = _Net()
+    _install(monkeypatch, net)
+    video = _Video()
+    queries = np.array([[5, 10.5, 10.5], [1, 20.5, 20.5], [1, 30.5, 30.5]])
+    tracks = _tracker(checkpoint=str(ckpt), max_queries=2).track(video, queries, range(8))
+    starts = [c for c in net.calls if c["queries"] is not None]
+    # sorted by start frame: the two frame-1 queries share a pass from frame 1, the frame-5 one starts at 5
+    assert [(c["frame"], len(c["queries"])) for c in starts] == [(1, 2), (5, 1)]
+    assert video.reads == list(range(1, 8)) + list(range(5, 8))
+    assert tracks.visible[1:, 1:].all() and not tracks.visible[1:, 0].any()
+    assert tracks.visible[0, 5:].all() and not tracks.visible[0, :5].any()
+
+
+def test_non_finite_queries_are_left_out(monkeypatch: pytest.MonkeyPatch, ckpt: Any) -> None:
+    net = _Net()
+    _install(monkeypatch, net)
+    queries = np.array([[0, 10.5, 10.5], [0, np.nan, 20.5], [0, 30.5, np.inf]])
+    tracks = _tracker(checkpoint=str(ckpt)).track(_Video(), queries, [0, 1, 2])
+    assert len(net.calls[0]["queries"]) == 1 and np.isfinite(net.calls[0]["queries"]).all()
+    assert tracks.visible[0].all()
+    assert not tracks.visible[1:].any() and np.isnan(tracks.points[1:]).all()
+
+
+def test_network_and_checkpoint_hash_are_shared_across_trackers(monkeypatch: pytest.MonkeyPatch, ckpt: Any) -> None:
+    from openbeam_v2e.perception.adapters import tapnext as T
+
+    log = _install(monkeypatch, _Net())
+    calls = []
+    monkeypatch.setattr(T, "sha256_of", lambda path: calls.append(path) or "0" * 64)
+    for _ in range(3):
+        tr = _tracker(checkpoint=str(ckpt))
+        tr.track(_Video(), np.array([[0, 10.5, 10.5]]), [0, 1])
+        assert tr.provenance().weights_sha256 == "0" * 64
+    assert log.count(("pt", str(ckpt), "cpu", 256)) == 1 and len(calls) == 1

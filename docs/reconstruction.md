@@ -243,8 +243,10 @@ libraries only when they run:
 
 Model weights are downloaded from their hosts only when you run a model that needs them; check
 each model's licence on its model card before you use its output. `tapnext` never downloads
-weights: pass the local path of a checkpoint linked from the tapnet README as `checkpoint`
-(with `resolution: 512` for the 512 x 512 TAPNext++ checkpoint). `registry.describe()` lists
+weights: pass the local path of `tapnextpp_ckpt.pt`, `tapnextpp_512.ckpt` (with `resolution: 512`)
+or `bootstapnext_ckpt.npz` as `checkpoint`. The stage override `points=tapnext` cannot carry the
+checkpoint, so configure it in the camera stage:
+`{"model": "baseline.point_tracks", "params": {"point_tracker": "tapnext", "point_tracker_params": {"checkpoint": "/path/to/tapnextpp_ckpt.pt"}}}`. `registry.describe()` lists
 what your installation can run.
 
 ## The stage cache

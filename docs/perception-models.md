@@ -54,15 +54,19 @@ for model in registry.describe():
   [tapnet](https://github.com/google-deepmind/tapnet) repository. It is the first learned point
   tracker here whose code and weights are both released under Apache-2.0. tapnet is not on PyPI:
   install `[perception]` plus `"tapnet[torch] @ git+https://github.com/google-deepmind/tapnet.git"`
-  and `einops`. The adapter never downloads weights. Download a checkpoint linked from the tapnet
-  README and pass its path as `checkpoint`, with `resolution: 512` for the 512 x 512 TAPNext++
-  checkpoint. The model runs online, one frame at a time, so memory stays bounded on long clips.
+  and `einops` (tapnet's own install also pulls in JAX and its other dependencies). The adapter
+  never downloads weights. Download one of the checkpoints it supports from the tapnet README,
+  `tapnextpp_ckpt.pt` (256 x 256), `tapnextpp_512.ckpt` (pass `resolution: 512`) or
+  `bootstapnext_ckpt.npz` (256 x 256), and pass its path as `checkpoint`. The model runs online,
+  one frame at a time; queries are tracked in groups of at most `max_queries` (default 256), each
+  group starting at its own earliest query frame, so memory stays bounded on long clips.
   Like `baseline.lk`, it tracks forward through the frames in the order given: a point has no
   position before its query frame. It fills `PointTracks.confidence` from tapnet's own certainty
   estimate. The adapter is tested with stand-ins for PyTorch and tapnet, not with the real
   weights.
-- `cotracker` is optional because CoTracker3's code and weights are released under CC BY-NC 4.0
-  (non-commercial use only).
+- `cotracker` runs CoTracker3 (offline, forwards and backwards), installed from its repository.
+  Most of CoTracker's code, and the CoTracker3 weights, are released under CC BY-NC 4.0:
+  non-commercial use only.
 - Mask trackers such as SAM 2 (and the older Track-Anything) follow object masks, not points.
   They belong to the segmentation stage (`sam2`), not to `point_tracking`.
 
